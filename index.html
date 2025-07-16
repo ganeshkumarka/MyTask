@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🗂️ MyTask - Daily Planner</title>
+  <title>🗂️ MyTask - Personal Task Manager</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -10,19 +10,117 @@
   <div class="app">
     <header>
       <h1>🗂️ MyTask</h1>
-      <button id="toggleDark">🌙</button>
+      <div class="header-controls">
+        <span id="taskStats"></span>
+        <button id="toggleDark" title="Toggle Dark Mode">🌙</button>
+      </div>
     </header>
+    
     <div class="controls">
-      <input type="date" id="taskDate">
-      <input type="text" id="taskTitle" placeholder="New task...">
-      <textarea id="taskNote" placeholder="Quick note or idea (optional)"></textarea>
-      <button onclick="addTask()">➕ Add Task</button>
-      <button onclick="exportTasks()">📤 Export</button>
-      <input type="file" id="importFile" onchange="importTasks()" accept=".json">
+      <div class="input-row">
+        <input type="text" id="taskTitle" placeholder="What needs to be done?" required>
+        <button onclick="addTask()" class="add-btn">➕ Add</button>
+      </div>
+      
+      <div class="input-row">
+        <div class="date-inputs">
+          <div class="date-group">
+            <label for="taskDate">Start Date:</label>
+            <input type="date" id="taskDate" required>
+          </div>
+          <div class="date-group">
+            <label for="taskEndDate">Due Date:</label>
+            <input type="date" id="taskEndDate">
+          </div>
+        </div>
+      </div>
+      
+      <div class="input-row">
+        <select id="taskPriority">
+          <option value="low">🔵 Low Priority</option>
+          <option value="medium" selected>🟡 Medium Priority</option>
+          <option value="high">🔴 High Priority</option>
+        </select>
+        <select id="taskCategory">
+          <option value="">📂 No Category</option>
+          <option value="work">💼 Work</option>
+          <option value="personal">👤 Personal</option>
+          <option value="health">💪 Health</option>
+          <option value="learning">📚 Learning</option>
+          <option value="finance">💰 Finance</option>
+          <option value="other">📝 Other</option>
+        </select>
+      </div>
+      
+      <div class="input-row">
+        <textarea id="taskNote" placeholder="Quick notes, ideas, or details..." rows="3"></textarea>
+      </div>
+      
+      <div class="action-buttons">
+        <button onclick="exportTasks()" class="secondary-btn">📤 Export</button>
+        <button onclick="document.getElementById('importFile').click()" class="secondary-btn">📥 Import</button>
+        <button onclick="clearAllTasks()" class="danger-btn">�️ Clear All</button>
+        <input type="file" id="importFile" onchange="importTasks()" accept=".json" style="display: none;">
+      </div>
     </div>
-    <input type="text" id="searchBox" placeholder="🔍 Search tasks..." oninput="renderTasks()">
+
+    <div class="filters">
+      <input type="text" id="searchBox" placeholder="🔍 Search tasks..." oninput="renderTasks()">
+      <div class="filter-buttons">
+        <button onclick="filterTasks('all')" class="filter-btn active" data-filter="all">All</button>
+        <button onclick="filterTasks('today')" class="filter-btn" data-filter="today">Today</button>
+        <button onclick="filterTasks('overdue')" class="filter-btn" data-filter="overdue">Overdue</button>
+        <button onclick="filterTasks('not-started')" class="filter-btn" data-filter="not-started">Not Started</button>
+        <button onclick="filterTasks('in-progress')" class="filter-btn" data-filter="in-progress">In Progress</button>
+        <button onclick="filterTasks('done')" class="filter-btn" data-filter="done">Done</button>
+      </div>
+    </div>
+    
     <div id="taskList"></div>
   </div>
+
+  <!-- Edit Task Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✏️ Edit Task</h3>
+        <button onclick="closeEditModal()" class="close-btn">✖️</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="editTitle" placeholder="Task title">
+        <div class="date-inputs">
+          <div class="date-group">
+            <label>Start Date:</label>
+            <input type="date" id="editDate">
+          </div>
+          <div class="date-group">
+            <label>Due Date:</label>
+            <input type="date" id="editEndDate">
+          </div>
+        </div>
+        <select id="editPriority">
+          <option value="low">🔵 Low Priority</option>
+          <option value="medium">🟡 Medium Priority</option>
+          <option value="high">🔴 High Priority</option>
+        </select>
+        <select id="editCategory">
+          <option value="">📂 No Category</option>
+          <option value="work">💼 Work</option>
+          <option value="personal">👤 Personal</option>
+          <option value="health">💪 Health</option>
+          <option value="learning">📚 Learning</option>
+          <option value="finance">💰 Finance</option>
+          <option value="other">📝 Other</option>
+        </select>
+        <textarea id="editNote" placeholder="Notes and ideas..." rows="4"></textarea>
+        <div class="modal-actions">
+          <button onclick="saveEditedTask()" class="save-btn">💾 Save Changes</button>
+          <button onclick="closeEditModal()" class="cancel-btn">❌ Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
